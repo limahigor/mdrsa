@@ -63,3 +63,23 @@ void maior_primo(int intervalo){
         stop = clock()/CLOCKS_PER_SEC;
     }while((stop-start) < intervalo);
 }
+
+unsigned int fast_mod_pow(unsigned  long int expo,
+                          unsigned long int base,
+                          unsigned long int mod){
+
+    if(base == mod)
+        return 0;
+
+    if(isprime(mod) || (mdc_euclides(expo, base) == 1)){
+        if((expo % (mod - 1)) == 0)
+            return 1;
+
+        if(expo > mod){
+            expo = expo % (mod - 1);
+            return fast_mod_pow(expo, base, mod);
+        }
+
+        printf("b: %li exp: %li r: %li\n", base, expo, (unsigned long int)pow(28, 186));
+    }   
+}
