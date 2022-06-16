@@ -133,9 +133,9 @@ void init(list_t alfabeto){
 }
 
 void list_destroy(list_t list){
-	while(list->next != NULL){
-
-	}
+	/*while(list->next != NULL){
+		//limpa os membros da lista
+	}*/
 }
 
 void list_create(list_t *list){
