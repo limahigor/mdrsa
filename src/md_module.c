@@ -64,14 +64,17 @@ void maior_primo(int intervalo){
     }while((stop-start) < intervalo);
 }
 
-unsigned int fast_mod_pow(unsigned  long int expo,
+unsigned int fast_mod_pow(unsigned long int expo,
                           unsigned long int base,
                           unsigned long int mod){
 
     if(base == mod)
         return 0;
 
-    if(isprime(mod) || (mdc_euclides(expo, base) == 1)){
+    if((base % mod) == 0)
+        return 0;
+
+    if(mdc_euclides(base, mod) == 1){
         if((expo % (mod - 1)) == 0)
             return 1;
 
@@ -79,7 +82,34 @@ unsigned int fast_mod_pow(unsigned  long int expo,
             expo = expo % (mod - 1);
             return fast_mod_pow(expo, base, mod);
         }
+    }
 
-        printf("b: %li exp: %li r: %li\n", base, expo, (unsigned long int)pow(28, 186));
-    }   
+    unsigned long int resto = 1;
+    int *array;
+    array = malloc(sizeof(int) * 10000);
+    int qnt = 0;
+
+    printf("b: %li exp: %li r: %li\n", base, expo, resto);
+
+    while(expo != 0){
+        resto *= base;
+        if(resto > mod){
+            printf("%i\n", resto);
+            *(array + qnt) = (resto % mod);
+            resto = 1;
+            qnt++;
+           // printf("TESTE2\n");
+        }
+        expo--;
+    }
+
+    int teste = resto;
+    int teste2 = 1;
+
+    for(int c = 0; c < qnt; c++){
+        printf("t: %i %i\n", *(array + c), teste);
+        teste *= *(array + c);
+    }
+
+    printf("b: %li exp: %li r: %li\n", base, expo, teste);
 }

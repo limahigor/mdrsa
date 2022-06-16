@@ -18,7 +18,7 @@ struct list_s{
 	struct list_s *next;
 };
 
-_Bool gerar_chave(unsigned int p, unsigned int q, unsigned int e){
+_Bool public_key(unsigned int p, unsigned int q, unsigned int e){
 	AUTOFREE char *buffer = NULL, *n_string = NULL, *e_string = NULL;
 	unsigned int calc, n;
 	int arq;
@@ -60,13 +60,13 @@ _Bool gerar_chave(unsigned int p, unsigned int q, unsigned int e){
 	return 1;
 }
 
-_Bool encriptar(char *buffer, char *chave, list_t alfabeto){
+_Bool encrypt(char *buffer, char *chave, list_t alfabeto){
 	unsigned int max, num, arq;
 	unsigned char letra;
 
-	char *text;
-	text = malloc(LEN + 1);
-	memset(text, 0, LEN + 1);
+	AUTOFREE char *text_encrypted;
+	text_encrypted = malloc(sizeof(int) * (LEN + 1));
+	memset(text_encrypted, 0, LEN + 1);
 
 	max = strlen(buffer); //pega o tamanho do texto a ser criptografado
 
@@ -75,19 +75,18 @@ _Bool encriptar(char *buffer, char *chave, list_t alfabeto){
 		//fazer o calculo
 		//
 		//
-		letra = get_letter(num, alfabeto); //transfomar numeros em suas letras correspondetes
-		*(text + c) = letra; //joga cada letra pra string que compoe o texto criptografado
+		//*(text_encrypted + c) = num;
 	}
 
-	printf("%s\n", text); //teste
+	printf("%s\n", text_encrypted); //teste
 
 	arq = open("encrypt.txt", O_RDWR | O_CREAT, 0764); //abre o arquivo onde vai estar o texto
-	dprintf(arq, text); //joga o texto pro arquivo
+	dprintf(arq, text_encrypted); //joga o texto pro arquivo
 	close(arq); //fecha o arquivo
 	return 1;
 }
 
-_Bool desencriptar(char *buffer, char *chave, list_t alfabeto){
+_Bool decrypt(char *buffer, char *chave, list_t alfabeto){
 	unsigned int max, num, arq;
 	unsigned char letra;
 
