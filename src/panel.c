@@ -52,7 +52,7 @@ _Bool choose(list_t alfabeto){
 			return 1;
 			break;
 		case '3':
-			panel_decrypt();
+			panel_decrypt(alfabeto);
 			return 1;
 			break;
 		case '4':
@@ -74,7 +74,6 @@ void panel_key(){
 	int *num_key;
 	num_key = malloc(sizeof(int) * 3);
 
-	char *state = NULL;
 	AUTOFREE char *chave = NULL,
 				  *copy = NULL,
 				  *str = NULL;
@@ -96,35 +95,12 @@ void panel_key(){
 	fgets(chave, LEN, stdin);
 	chave[strlen(chave) - 1] = '\0';
 
-	if (!(copy = strdup(chave))){
-	    perror("Erro: verifique sua entrada!");
-	    getchar();
-	    return;
-  	}
-
-	str = strtok_r(copy, " ", &state);
-  	while(str){
-	    int verifica = 0;
-
-	    for(int c = 0; c < strlen(str); c++)
-	    	verifica = isdigit(str[c]);
-
-	    if(verifica){
-	    	count++;
-	    	*(num_key + count) = atoi(str);
-	    }
-
-	    str = strtok_r( NULL, " ", &state);
-  	}
-
-  	if(count < 3){
-  		printf("Erro! Verifique sua entrada!");
-  		getchar();
-  		free(num_key);
-	    return;
+	if(!(str_int(chave, num_key, 3))){
+		fputs("Erro: verifique sua entrada\n", stdout);
+		return;
 	}
 
-    //status = public_key(*(num_key + 0), *(num_key + 1), *(num_key + 2));
+    status = public_key(*(num_key + 0), *(num_key + 1), *(num_key + 2));
 
 	if(status)
 		printf("Chave gerada com sucesso!\n");
@@ -162,7 +138,9 @@ void panel_encrypt(list_t alfabeto){
 	buffer[strlen(buffer) - 1] = '\0';
 	chave[strlen(chave) - 1] = '\0';
 
-	//status = encrypt(buffer, chave, alfabeto);
+	printf("t:%s\n", buffer);
+
+	status = encrypt(buffer, chave, alfabeto);
 
 	if(status)
 		fputs("Mensagem encriptada com sucesso!\n", stdout);
@@ -172,7 +150,7 @@ void panel_encrypt(list_t alfabeto){
 	getchar();
 }
 
-void panel_decrypt(){
+void panel_decrypt(list_t alfabeto){
 	_Bool status = 1;
 	AUTOFREE char *buffer = NULL,
 				  *chave = NULL;
@@ -200,7 +178,7 @@ void panel_decrypt(){
 	buffer[strlen(buffer) - 1] = '\0';
 	chave[strlen(chave) - 1] = '\0';
 
-	//status = decrypt(buffer, chave);
+	status = decrypt(buffer, chave, alfabeto);
 
 	if(status)
 		fputs("Mensagem desencriptada com sucesso!\n", stdout);
@@ -208,4 +186,42 @@ void panel_decrypt(){
 		fputs("Erro ao desencriptar!\n", stdout);
 
 	getchar();
+}
+
+int str_int(char *string, int *array, int qnt){
+	AUTOFREE char *copy = NULL,
+				  *str = NULL;
+
+	char *state = NULL;
+	unsigned int count = 0;
+
+	if(!(copy = strdup(string))){
+	    perror("Erro: verifique sua entrada!");
+	    getchar();
+	    return 0;
+  	}
+
+	str = strtok_r(copy, " ", &state);
+  	while(str){
+	    int verifica = 0;
+
+	    for(int c = 0; c < strlen(str); c++)
+	    	verifica = isdigit(str[c]);
+
+	    if(verifica){
+	    	*(array + count) = atoi(str);
+	    	count++;
+	    }
+
+	    str = strtok_r( NULL, " ", &state);
+  	}
+
+  	if(count < qnt){
+  		printf("Erro! Verifique sua entrada!");
+  		getchar();
+  		free(array);
+	    return 0;
+	}
+
+	return 1;
 }
