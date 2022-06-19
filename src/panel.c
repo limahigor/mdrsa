@@ -1,15 +1,21 @@
 #include <stdio.h>
+#include <stdlib.h>
 #include <string.h>
+#include <ctype.h>
 //
 #include "../include/rsa_module.h"
 #include "../include/panel.h"
 
 int main(){
+	list_t alfabeto;
 	_Bool loop = 1;
+
+	list_create(&alfabeto);
+	init(alfabeto);
 
 	while(loop){ //Loop principal
 		main_panel();
-		loop = choose();
+		loop = choose(alfabeto);
 	}
 
 	return 0;
@@ -18,133 +24,204 @@ int main(){
 void cleanup_func(char **p){ free(*p); }
 
 void main_panel(){
-	#ifdef OS_Windows
-    	system("cls");
-	#else
-    	system("clear");
-	#endif
-    	
-	printf("======== MdRSA ========\n");
-	printf("[1] Gerar chave publica\n");
-	printf("[2] Encriptar\n");
-	printf("[3] Desencriptar\n");
-	printf("[4] Sair\n");
-	printf("=======================\n");
+    fputs("\033[2J\033[H", stdout);
+	fputs("========== MdRSA ==========\n", stdout);
+	fputs("[1] Gerar chave publica\n", stdout);
+	fputs("[2] Encriptar\n", stdout);
+	fputs("[3] Desencriptar\n", stdout);
+	fputs("[4] Sair\n", stdout);
+	fputs("===========================\n", stdout);
 }
 
-_Bool choose(){
-	list_t alfabeto;
-	unsigned char opt;
+_Bool choose(list_t alfabeto){
+	char opt;
+	AUTOFREE char *buffer = NULL; 
+	buffer = malloc(2);
 
-	list_create(&alfabeto);
-	init(alfabeto);
-
-	scanf(" %c", &opt);
+	fgets(buffer, 3, stdin);
+	buffer[1] = '\0';
+	opt = *buffer;
 
 	switch(opt){
 		case '1':
-			panel_chave();
+			panel_key();
 			return 1;
 			break;
 		case '2':
-			panel_encriptar(alfabeto);
+			panel_encrypt(alfabeto);
 			return 1;
 			break;
 		case '3':
-			panel_desencriptar();
+			panel_decrypt(alfabeto);
 			return 1;
 			break;
 		case '4':
-			printf("Saindo...\n");
+			fputs("Saindo...\n", stdout);
 			return 0;
 			break;
 		default:
-
-			printf("Opcao invalida!\n");
-			printf("Aperte qualquer tecla para continuar...\n");
-			main_panel();
-			choose();
-
+			fputs("Opcao invalida!\n", stdout);
+			fputs("Aperte qualquer tecla para continuar...\n", stdout);
+			return 1;
 			break;
 	}
-}
-
-void panel_chave(){
-	unsigned int primo_1, primo_2, relativo;
+}	
+	
+void panel_key(){
+	unsigned int count = 0;
 	_Bool status;
 
-	printf("Digite um par de primos e em seguida, um numero relativamente primo a (p-1)*(q-1)\n");
-	printf("Primo 1: ");
-	scanf("%i", &primo_1);
-	printf("Primo 2: ");
-	scanf("%i", &primo_2);
-	printf("Relativamente primo: ");
-	scanf("%i", &relativo);
+	int *num_key;
+	num_key = malloc(sizeof(int) * 3);
 
-	status = gerar_chave(primo_1, primo_2, relativo);
+	AUTOFREE char *chave = NULL,
+				  *copy = NULL,
+				  *str = NULL;
+
+	chave = malloc(LEN);
+
+	fputs("\033[2J\033[H", stdout);
+	fputs("===== Gen Public  Key =====\n", stdout);
+	fputs("Uso: Digite dois primos e\n"
+		  "um numero coprimo a \n"
+		  "(p-1)*(q-1), separados por\n"
+		  "por espaco.\n"
+		  "Ex.: 7 11 49\n"
+		  "Obs.: Essa eh sua chave\n"
+		  "privada, guarde com cuidado\n", stdout);
+	fputs("===========================\n", stdout);
+
+	printf("Chave: ", stdout);
+	fgets(chave, LEN, stdin);
+	chave[strlen(chave) - 1] = '\0';
+
+	if(!(str_int(chave, num_key, 3))){
+		fputs("Erro: verifique sua entrada\n", stdout);
+		return;
+	}
+
+    status = public_key(*(num_key + 0), *(num_key + 1), *(num_key + 2));
 
 	if(status)
 		printf("Chave gerada com sucesso!\n");
 	else
 		printf("Erro! Verifique sua entrada!\n");
 
-	getchar();getchar();
+	getchar();
+	free(num_key);
 }
 
-void panel_encriptar(list_t alfabeto){
+void panel_encrypt(list_t alfabeto){
 	_Bool status;
-	AUTOFREE char *buffer = NULL;
-	AUTOFREE char *chave = NULL;
+	AUTOFREE char *buffer = NULL,
+		 		  *chave = NULL;
 
 	buffer = malloc(LEN);
 	chave = malloc(LEN);
 
-	getchar();
+	fputs("\033[2J\033[H", stdout);
+	fputs("========= Encrypt =========\n", stdout);
+	fputs("Uso: Digite a mensagem e,\n"
+		  "depois, sua chave publica.\n"
+		  "Ex.: Mensagem: Ola\n"
+		  "     Chave: 17 28\n"
+		  "Obs.: A chave deve estar\n"
+		  "separada por espaco.\n", stdout);
+	fputs("===========================\n", stdout);
 
-	printf("Digite a mensagem: ");
+	fputs("Digite a mensagem: ", stdout);
 	fgets(buffer, LEN, stdin);
 
-	printf("Digite a chave publica: ");
+	fputs("Digite a chave: ", stdout);
 	fgets(chave, LEN, stdin);
 
 	buffer[strlen(buffer) - 1] = '\0';
 	chave[strlen(chave) - 1] = '\0';
 
-	status = encriptar(buffer, chave, alfabeto);
+	printf("t:%s\n", buffer);
+
+	status = encrypt(buffer, chave, alfabeto);
 
 	if(status)
-		printf("Mensagem encriptada com sucesso!\n");
+		fputs("Mensagem encriptada com sucesso!\n", stdout);
 	else
-		printf("Erro ao encriptar!\n");
+		fputs("Erro ao encriptar!\n", stdout);
 
 	getchar();
 }
 
-void panel_desencriptar(){
+void panel_decrypt(list_t alfabeto){
 	_Bool status = 1;
-	AUTOFREE char *buffer = NULL;
-	AUTOFREE char *chave = NULL;
+	AUTOFREE char *buffer = NULL,
+				  *chave = NULL;
 
 	buffer = malloc(LEN);
 	chave = malloc(LEN);
 
-	getchar();
+	fputs("\033[2J\033[H", stdout);
+	fputs("========= Decrypt =========\n", stdout);
+	fputs("Uso: Digite a mensagem\n"
+		  "encriptada e, depois,\n"
+		  "sua chave privada.\n"
+		  "Ex.: Mensagem: 4 8 7\n"
+		  "     Chave: 7 11 49\n"
+		  "Obs.: A chave deve estar\n"
+		  "separada por espaco.\n", stdout);
+	fputs("===========================\n", stdout);
 
-	printf("Digite a mensagem: ");
+	fputs("Digite a mensagem: ", stdout);
 	fgets(buffer, LEN, stdin);
 
-	printf("Digite os numeros que compoe a chave privada(separados por espaco): ");
+	fputs("Digite a chave: ", stdout);
 	fgets(chave, LEN, stdin);
 
 	buffer[strlen(buffer) - 1] = '\0';
 	chave[strlen(chave) - 1] = '\0';
 
-	//status = desencriptar(buffer, chave);
+	status = decrypt(buffer, chave, alfabeto);
 
 	if(status)
-		printf("Mensagem desencriptada com sucesso!\n");
+		fputs("Mensagem desencriptada com sucesso!\n", stdout);
 	else
-		printf("Erro ao desencriptar!\n");
+		fputs("Erro ao desencriptar!\n", stdout);
 
 	getchar();
+}
+
+int str_int(char *string, int *array, int qnt){
+	AUTOFREE char *copy = NULL,
+				  *str = NULL;
+
+	char *state = NULL;
+	unsigned int count = 0;
+
+	if(!(copy = strdup(string))){
+	    perror("Erro: verifique sua entrada!");
+	    getchar();
+	    return 0;
+  	}
+
+	str = strtok_r(copy, " ", &state);
+  	while(str){
+	    int verifica = 0;
+
+	    for(int c = 0; c < strlen(str); c++)
+	    	verifica = isdigit(str[c]);
+
+	    if(verifica){
+	    	*(array + count) = atoi(str);
+	    	count++;
+	    }
+
+	    str = strtok_r( NULL, " ", &state);
+  	}
+
+  	if(count < qnt){
+  		printf("Erro! Verifique sua entrada!");
+  		getchar();
+  		free(array);
+	    return 0;
+	}
+
+	return 1;
 }

@@ -3,9 +3,10 @@
 
 int mdc_euclides(unsigned int x, unsigned int y);
 unsigned int isprime(unsigned long int num);
-
-
-//funções para teste
-void maior_primo(int intervalo);
+int in_mod(int x, int y);
+int* comb_linear_mdc(int num1, int num2);
+unsigned int fast_mod_pow(unsigned long int base,
+                          unsigned long int expo,
+                          unsigned long int mod);
 
 #endif
