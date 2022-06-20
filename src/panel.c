@@ -68,7 +68,6 @@ _Bool choose(list_t alfabeto){
 }	
 	
 void panel_key(){
-	unsigned int count = 0;
 	_Bool status;
 
 	int *num_key;
@@ -91,7 +90,7 @@ void panel_key(){
 		  "privada, guarde com cuidado\n", stdout);
 	fputs("===========================\n", stdout);
 
-	printf("Chave: ", stdout);
+	fputs("Chave: ", stdout);
 	fgets(chave, LEN, stdin);
 	chave[strlen(chave) - 1] = '\0';
 
@@ -137,8 +136,6 @@ void panel_encrypt(list_t alfabeto){
 
 	buffer[strlen(buffer) - 1] = '\0';
 	chave[strlen(chave) - 1] = '\0';
-
-	printf("t:%s\n", buffer);
 
 	status = encrypt(buffer, chave, alfabeto);
 

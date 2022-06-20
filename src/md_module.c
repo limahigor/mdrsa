@@ -47,51 +47,21 @@ unsigned int isprime(unsigned long int num){
     return PRIMO;
 }
 
-unsigned int fast_mod_pow(unsigned long int base,
-                          unsigned long int expo,
-                          unsigned long int mod){
+unsigned long int fast_mod_pow(unsigned long int base,
+          unsigned long int expo,
+          unsigned long int mod){
 
-    if(base == mod)
-        return 0;
+    unsigned long int pot, resul;
+    pot = base % mod;
+    resul = 1;
 
-    if((base % mod) == 0)
-        return 0;
-
-    if(mdc_euclides(base, mod) == 1){
-        if((expo % (mod - 1)) == 0)
-            return 1;
-
-        if(expo > mod){
-            expo = expo % (mod - 1);
-            return fast_mod_pow(base, expo, mod);
-        }
+    for(; expo > 0; expo /= 2){
+        if((expo % 2) == 1)
+            resul = (resul * pot) % mod;
+        pot = (pot * pot) % mod;
     }
 
-    if(log2(pow(base, expo)) <= 32){
-        unsigned long pot = 1;
-        for(int c = 0; c < expo; c++)
-            pot *= base;
-        return (pot % mod);
-    }
-
-    unsigned int resto = expo % 3;
-    unsigned int expo2 = expo / 3;
-
-    unsigned long long int pot = 1;
-    for(int c = 0; c < 3; c++)
-        pot *= base;
-
-    unsigned int base2 = (pot % mod);
-
-    pot = 1;
-    if(resto > 0){
-        for(int c = 0; c < resto; c++)
-            pot *= base;
-        pot = pot % mod;
-    }else
-        pot = 1;
-
-    return (pot * fast_mod_pow(base2, expo2, mod)) % mod;
+    return resul;
 }
 
 int *comb_linear_mdc(int num1, int num2){

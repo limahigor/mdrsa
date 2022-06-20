@@ -69,7 +69,6 @@ void init(list_t alfabeto){
 
 int get_number(char letra, list_t alfabeto){
 	list_t aux;
-	unsigned int number;
 
 	aux = alfabeto;
 
@@ -88,7 +87,6 @@ int get_number(char letra, list_t alfabeto){
 
 int get_letter(int num, list_t alfabeto){
 	list_t aux;
-	unsigned int number;
 
 	aux = alfabeto;
 
@@ -147,7 +145,6 @@ _Bool public_key(unsigned int p, unsigned int q, unsigned int e){
 
 _Bool encrypt(char *buffer, char *chave, list_t alfabeto){
 	unsigned int max, num, arq;
-	unsigned char letra;
 
 	int *key_num;
 	key_num = malloc(sizeof(int)*2);
@@ -170,13 +167,14 @@ _Bool encrypt(char *buffer, char *chave, list_t alfabeto){
 
 		num = get_number(buffer[c], alfabeto); //transformar letras em seus numeros correspondentes
 
-		int resto = fast_mod_pow(num, 49, 77);
+		int resto = fast_mod_pow(num, e, n);
 		sprintf(resul_resto, "%d", resto);
 
 		strcat (text_encrypted, resul_resto);
 		if(c != max - 1)
 			strcat (text_encrypted, " ");
 	}
+
 	arq = open("encrypt.txt", O_RDWR | O_CREAT, 0764); //abre o arquivo onde vai estar o texto
 	dprintf(arq, text_encrypted); //joga o texto pro arquivo
 	close(arq); //fecha o arquivo
@@ -184,8 +182,7 @@ _Bool encrypt(char *buffer, char *chave, list_t alfabeto){
 }
 
 _Bool decrypt(char *buffer, char *chave, list_t alfabeto){
-	unsigned int max, num, arq, count = 0;
-	unsigned char letra;
+	unsigned int num, arq, count = 0;
 	AUTOFREE char *copy,
 				  *str;
 	char *state;
@@ -206,8 +203,6 @@ _Bool decrypt(char *buffer, char *chave, list_t alfabeto){
 	int q = *(key_num + 1);
 	int e = *(key_num + 2);
 	int d = in_mod(e, ((p - 1) * (q - 1)));
-
-	max = strlen(buffer); //pega o tamanho do texto a ser criptografado
 
 	if(!(copy = strdup(buffer))){
 	    perror("Erro: verifique sua entrada!");
