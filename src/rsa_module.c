@@ -130,7 +130,7 @@ _Bool public_key(unsigned int p, unsigned int q, unsigned int e)
 
     calc = ((p - 1) * (q - 1));
 
-    if (!(mdc_euclides(calc, e) == 1))
+    if(!(mdc_euclides(calc, e) == 1))
         return 0;
 
     n = (p * q);
@@ -165,7 +165,9 @@ _Bool encrypt(char *buffer, char *chave, list_t alfabeto)
     key_num = malloc(sizeof(int) * 2);
 
     AUTOFREE char *text_encrypted;
+
     text_encrypted = malloc(sizeof(int) * (LEN + 1));
+
     memset(text_encrypted, 0, LEN + 1);
 
     max = strlen(buffer); // pega o tmaanho do texto a ser criptografado
@@ -200,14 +202,18 @@ _Bool encrypt(char *buffer, char *chave, list_t alfabeto)
 _Bool decrypt(char *buffer, char *chave, list_t alfabeto)
 {
     unsigned int num, arq, count = 0;
-    AUTOFREE char *copy,
-        *str;
-    char *state;
 
+    AUTOFREE char *copy,
+                  *str;
+
+    char *state;
     char *text;
     int *array;
+
     text = malloc(LEN + 1);
+
     array = malloc(sizeof(int) * LEN);
+
     memset(text, 0, LEN + 1);
 
     int *key_num;
@@ -229,14 +235,14 @@ _Bool decrypt(char *buffer, char *chave, list_t alfabeto)
     }
 
     str = strtok_r(copy, " ", &state);
-    while (str)
+    while(str)
     {
         int verifica = 0;
 
-        for (int c = 0; c < strlen(str); c++)
+        for(int c = 0; c < strlen(str); c++)
             verifica = isdigit(str[c]);
 
-        if (verifica)
+        if(verifica)
         {
             *(array + count) = atoi(str);
             count++;

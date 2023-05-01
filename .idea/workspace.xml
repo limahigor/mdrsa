@@ -2,10 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="339f543a-ff70-4306-9c18-7175b0648c7a" name="Changes" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/issuestore/index.pb" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/sonarlint/securityhotspotstore/index.pb" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/md_module.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/md_module.c" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/panel.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/panel.c" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.vscode/launch.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/rsa_module.c" beforeDir="false" afterPath="$PROJECT_DIR$/src/rsa_module.c" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -31,6 +29,10 @@
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "WebServerToolWindowFactoryState": "false",
     "git-widget-placeholder": "main",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
     "settings.editor.selected.configurable": "preferences.pluginManager",
     "vue.rearranger.settings.migration": "true"
   }
@@ -44,6 +46,8 @@
       <option name="presentableId" value="Default" />
       <updated>1682977244534</updated>
       <workItem from="1682977245793" duration="276000" />
+      <workItem from="1682977529156" duration="173000" />
+      <workItem from="1682978252916" duration="314000" />
     </task>
     <servers />
   </component>
